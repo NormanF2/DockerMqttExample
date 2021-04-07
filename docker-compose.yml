@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:1.6.13
+    container_name: mosquitto
+    ports:
+      - 1883:1883
+      - 8883:8883
+      - 9001:9001
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-logs:/mosquitto/logs
+      - mosquitto-conf:/mosquitto/config
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1g'
+
+  publisher_service:
+    image: mqtt-publisher
+    container_name: publisher
+    environment:
+      MQTT_BROKER_HOST: 'mosquitto'
+      MQTT_BROKER_PORT: 1883
+      MQTT_PUB_ID: 1
+    depends_on:
+      - mosquitto
+
+volumes:
+  store:
+  config:
+  mosquitto-data:
+    driver_opts:
+      type: none
+      device: volumes/mosquitto-data
+      o: bind
+  mosquitto-logs:
+    driver_opts:
+      type: none
+      device: volumes/mosquitto-logs
+      o: bind
+  mosquitto-conf:
+    driver_opts:
+      type: none
+      device: volumes/mosquitto-conf
+      o: bind

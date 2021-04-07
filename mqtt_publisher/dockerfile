@@ -1,0 +1,11 @@
+FROM python:3.8
+
+LABEL maintainer='vincenzonorman.vitale@unina.it'
+
+COPY requirements.txt /requirements.txt
+
+COPY mqtt_publisher.py /mqtt_publisher.py
+
+RUN pip3 install -r /requirements.txt
+
+CMD ["python3", "-u", "/mqtt_publisher.py"]
